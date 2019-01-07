@@ -55,10 +55,10 @@ public class AnimationViewer extends JPanel implements ActionListener {
         shapes.add(new ImageShape(20, 20, 3, 4, 365/3, 354/3, "TRex.png"));
 
         shapes.add(new ImageShape(50, 30, 5, 2, 256, 160,
-                new URL("http://magic.wizards.com/sites/mtg/files/images/wallpaper/Kari-Zev-Skyship-Raider_AER_2560x1600_Wallpaper.jpg")));
+                new URL("https://magic.wizards.com/sites/mtg/files/images/wallpaper/Kari-Zev-Skyship-Raider_AER_2560x1600_Wallpaper.jpg")));
 
         shapes.add(new ImageShape(100, 100, 6, 1, 256, 160,
-                new URL("http://magic.wizards.com/sites/mtg/files/images/wallpaper/Ornithopter_AER_2560x1600_Wallpaper.jpg")));
+                new URL("https://magic.wizards.com/sites/mtg/files/images/wallpaper/Ornithopter_AER_2560x1600_Wallpaper.jpg")));
 
         shapes.add(new ImageShape(500, 300, 4, 6, 256, 160, "charizard.jpg"));
 
