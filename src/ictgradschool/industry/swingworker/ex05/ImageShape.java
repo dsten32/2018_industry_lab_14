@@ -32,26 +32,12 @@ public class ImageShape extends Shape {
     public ImageShape(int x, int y, int deltaX, int deltaY, int width, int height, URL url) {
         super(x, y, deltaX, deltaY, width, height);
 
-
-
         ImageGetter imageGetter = new ImageGetter(url,width,height);
         imageGetter.execute();
-
-//        try {
-//            Image image = ImageIO.read(url);
-//            if (width == image.getWidth(null) && height == image.getHeight(null)) {
-//                this.image = image;
-//            } else {
-//                this.image = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-//            }
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-
     }
 
     //My Swinger
-    private class ImageGetter extends SwingWorker<Image,Image>{
+    private class ImageGetter extends SwingWorker<Void,Image>{
         private URL url;
         private int width;
         private int height;
@@ -61,11 +47,11 @@ public class ImageShape extends Shape {
             this.url=url;
             this.width=width;
             this.height=height;
-
         }
 
         @Override
-        protected Image doInBackground() {
+        protected Void doInBackground() {
+            //creates a temporary image to publish
             BufferedImage tempImage = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
             Graphics2D g2d = tempImage.createGraphics();
             g2d.setColor(Color.lightGray);
@@ -74,8 +60,10 @@ public class ImageShape extends Shape {
             g2d.drawRect(0,0,width-1,height-1);
             g2d.drawString("Loading...",(int)(width/2.5),height/2);
             g2d.dispose();
+            //send image to process method
             publish(tempImage);
 
+            //load the real image
             try {
                 Image image = ImageIO.read(url);
                 if (width == image.getWidth(null) && height == image.getHeight(null)) {
@@ -84,15 +72,17 @@ public class ImageShape extends Shape {
                     this.retImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                 }
                 retImage.getHeight(null);
+                //publish the real image
                 publish(retImage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return retImage;
+            return null;
         }
 
         @Override
         protected void process(List<Image> chunks) {
+            //process the image list and set the shape image.
             for (Image timage:chunks
                  ) {
                    image = timage;
