@@ -9,6 +9,7 @@ import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 import static javax.imageio.ImageIO.*;
 
@@ -49,28 +50,45 @@ public class ImageShape extends Shape {
     }
 
     //My Swinger
-    private class ImageGetter extends SwingWorker<Void,Image>{
-        URL url;
-        int width;
-        int height;
-        Image image;
+    private class ImageGetter extends SwingWorker<Image,Image>{
+        private URL url;
+        private int width;
+        private int height;
+        private Image retImage;
 
         public ImageGetter(URL url,int width,int height){
             this.url=url;
             this.width=width;
             this.height=height;
-//            this.image=image;
+
         }
 
         @Override
-        protected Void doInBackground() throws Exception {
+        protected Image doInBackground() {
             try {
-                Image image = read(url);
-                publish(image);
+                Image image = ImageIO.read(url);
+                if (width == image.getWidth(null) && height == image.getHeight(null)) {
+                    this.retImage = image;
+                } else {
+                    this.retImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                }
+                retImage.getHeight(null);
+//                publish(image);
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            return null;
+            return retImage;
+        }
+
+        @Override
+        protected void done() {
+            try{
+                image = get();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+            }
         }
 
         @Override
@@ -78,9 +96,9 @@ public class ImageShape extends Shape {
             for (Image image:chunks
                  ) {
                     if (width == image.getWidth(null) && height == image.getHeight(null)) {
-                        this.image = image;
+                        this.retImage = image;
                     } else {
-                        this.image = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
+                        this.retImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                     }
             }
         }
