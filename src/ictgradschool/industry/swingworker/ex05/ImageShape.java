@@ -3,6 +3,7 @@ package ictgradschool.industry.swingworker.ex05;
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -65,6 +66,16 @@ public class ImageShape extends Shape {
 
         @Override
         protected Image doInBackground() {
+            BufferedImage tempImage = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
+            Graphics2D g2d = tempImage.createGraphics();
+            g2d.setColor(Color.lightGray);
+            g2d.fillRect(0,0,width,height);
+            g2d.setColor(Color.red);
+            g2d.drawRect(0,0,width-1,height-1);
+            g2d.drawString("Loading...",(int)(width/2.5),height/2);
+            g2d.dispose();
+            publish(tempImage);
+
             try {
                 Image image = ImageIO.read(url);
                 if (width == image.getWidth(null) && height == image.getHeight(null)) {
@@ -73,7 +84,7 @@ public class ImageShape extends Shape {
                     this.retImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                 }
                 retImage.getHeight(null);
-//                publish(image);
+                publish(retImage);
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -81,25 +92,10 @@ public class ImageShape extends Shape {
         }
 
         @Override
-        protected void done() {
-            try{
-                image = get();
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            } catch (ExecutionException e) {
-                e.printStackTrace();
-            }
-        }
-
-        @Override
         protected void process(List<Image> chunks) {
-            for (Image image:chunks
+            for (Image timage:chunks
                  ) {
-                    if (width == image.getWidth(null) && height == image.getHeight(null)) {
-                        this.retImage = image;
-                    } else {
-                        this.retImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
-                    }
+                   image = timage;
             }
         }
     }
