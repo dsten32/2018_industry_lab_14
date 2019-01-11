@@ -51,14 +51,29 @@ public class ImageShape extends Shape {
 
         @Override
         protected Void doInBackground() {
+            //just saying loading is kinda boring, lets add a list and randomise the output.
+            String[] loadMess = {"Pikachu, I choose you!..","Loading...","Gimmeie a sec..","hold ya horses", "wait for iiiiiit..", "ffs I'm getting there..", "maybe you'd like to come in here and do this?","Loading.., ya know, eventually","man, I sure wasted a lot of time in this.."};
+            String mess = loadMess[(int)(Math.random()*loadMess.length)];
+            //lets see if we can change up the fonts a bit too
+            GraphicsEnvironment env = GraphicsEnvironment.getLocalGraphicsEnvironment();
+            String[] fontList = env.getAvailableFontFamilyNames();
+            String font = fontList[(int)(Math.random()*fontList.length)];
+
             //creates a temporary image to publish
             BufferedImage tempImage = new BufferedImage(width,height,BufferedImage.TYPE_INT_RGB);
             Graphics2D g2d = tempImage.createGraphics();
+            //draw the basic rectangle stuff in the image
             g2d.setColor(Color.lightGray);
             g2d.fillRect(0,0,width,height);
             g2d.setColor(Color.red);
             g2d.drawRect(0,0,width-1,height-1);
-            g2d.drawString("Loading...",(int)(width/2.5),height/2);
+            // do some font stuff
+            g2d.setFont(new Font(font, Font.PLAIN, (int)(Math.random()*10)+12));
+            //lets center this stuff
+            FontMetrics metrics = g2d.getFontMetrics(g2d.getFont());
+            int xText = (width - metrics.stringWidth(mess)) / 2;
+            //draw that font stuff
+            g2d.drawString(mess,xText,height/2);
             g2d.dispose();
             //send image to process method
             publish(tempImage);
@@ -71,6 +86,7 @@ public class ImageShape extends Shape {
                 } else {
                     this.retImage = image.getScaledInstance(width, height, Image.SCALE_SMOOTH);
                 }
+                //accessing image to get scaling to do it's thing.
                 retImage.getHeight(null);
                 //publish the real image
                 publish(retImage);
